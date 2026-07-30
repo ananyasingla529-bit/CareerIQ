@@ -32,7 +32,22 @@ No conflicts found between today's design work and the approved PRD/Blueprint �
 
 ---
 
-## Day 3 — Resume Input: Upload, Parsing & Job Description Entry (Upcoming)
-**Planned:** Build the PDF upload widget, PDF.js text extraction, review/edit step, plain-text paste fallback, and job description input with validation on `analyze.html`. See Implementation Blueprint, Day 3 section, for full detail.
+## Day 3 — Project Setup & Foundation (July 30, 2026)
+Adapted the day's plan to fit CareerIQ's locked architecture (no framework, no database, no auth) rather than following a generic setup template. Installed and configured the local development environment: VS Code, the Live Server extension, and Node.js LTS (v24.18.1). Opened the project locally and verified it runs correctly via Live Server. Debugged a cosmetic VS Code Explorer sidebar display issue (files were confirmed intact on disk throughout via `tree /F`; worked around using File → Open File... directly).
+
+Built the two genuinely foundational code files: **`css/styles.css`** (complete design system — color palette, typography, spacing, buttons, cards, badges, responsive nav) and **`js/app.js`** (shared header/footer injection, active-nav highlighting, mobile menu toggle, shared `escapeHTML()`/`formatDate()` utilities). Gave `index.html` real landing-page content; left `analyze.html`, `dashboard.html`, `compare.html` as clearly labeled placeholder shells per the blueprint's Day-by-day feature schedule.
+
+Verified: landing page loads and styles correctly, navigation works across all 4 pages, mobile hamburger menu functions, zero console errors, structure matches `ARCHITECTURE.md`/`PROJECT-STRUCTURE.md` with no drift.
+
+**Deliverables produced:** SETUP.md, ENVIRONMENT.md, updated PROJECT-STRUCTURE.md, DAY3-SUMMARY.md, Implementation Blueprint addendum (clarifying capstone-day vs. blueprint-day numbering going forward).
+
+**Repository status:** Resolved one merge conflict (local vs. remote doc versions) cleanly; 5 commits total on `main`.
+
+**Status:** ✅ Complete — Day 4 (Blueprint's "Day 3": Resume Input) ready to begin immediately, no additional setup required.
+
+---
+
+## Day 4 — Resume Input: Upload, Parsing & Job Description Entry (Upcoming)
+**Planned:** Build the PDF upload widget, PDF.js text extraction, review/edit step, plain-text paste fallback, and job description input with validation on the real `analyze.html`. See Implementation Blueprint, Day 3 section, for full detail.
 
 **Status:** ⏳ Not started
