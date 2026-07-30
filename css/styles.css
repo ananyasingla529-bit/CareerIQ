@@ -1,0 +1,277 @@
+/* =========================================================
+   CareerIQ — Global Design System
+   Single source of visual truth for all pages.
+   ========================================================= */
+
+/* ---------- 1. Design Tokens (CSS Variables) ---------- */
+:root {
+  /* Brand palette (matches PRD/Pitch Deck identity) */
+  --color-navy: #1E2761;
+  --color-navy-light: #2A3578;
+  --color-cyan: #3FD0C9;
+  --color-gold: #F9E795;
+  --color-coral: #F96167;
+  --color-orange: #F9A03F;
+
+  /* Score / tier colors (used consistently across report, dashboard, compare) */
+  --tier-green: #2FBF71;
+  --tier-yellow: #F5C242;
+  --tier-orange: #F9A03F;
+  --tier-red: #E8544E;
+
+  /* Neutrals */
+  --color-white: #FFFFFF;
+  --color-bg: #F7F8FC;
+  --color-bg-alt: #EFF1F8;
+  --color-border: #E1E4EE;
+  --color-text: #1A1D2E;
+  --color-text-muted: #5B6072;
+
+  /* Typography */
+  --font-heading: Georgia, 'Cambria', serif;
+  --font-body: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  /* Radii & shadows */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 2px 10px rgba(30, 39, 97, 0.08);
+  --shadow-card-hover: 0 6px 20px rgba(30, 39, 97, 0.14);
+
+  /* Motion */
+  --transition-fast: 180ms ease;
+}
+
+/* ---------- 2. Reset & Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: var(--color-navy);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.2;
+}
+
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.3rem; }
+
+p { margin: 0 0 var(--space-3) 0; }
+
+a {
+  color: var(--color-navy);
+  text-decoration: none;
+}
+
+textarea, input {
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+/* ---------- 3. Layout Helpers ---------- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.section {
+  padding: var(--space-6) 0;
+}
+
+/* ---------- 4. Navigation ---------- */
+.site-header {
+  background: var(--color-navy);
+  padding: var(--space-3) 0;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-logo {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav a {
+  color: #C7CCE8;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--color-cyan);
+}
+
+/* Mobile nav toggle (hidden by default, shown under 640px) */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-white);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .nav-toggle { display: block; }
+
+  .site-nav {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-2);
+    position: absolute;
+    top: 60px;
+    right: var(--space-3);
+    background: var(--color-navy-light);
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  .site-nav.open { display: flex; }
+}
+
+/* ---------- 5. Buttons ---------- */
+.btn {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--color-white);
+  color: var(--color-navy);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-navy);
+}
+
+.btn-danger {
+  background: var(--color-white);
+  color: var(--tier-red);
+  border: 1px solid var(--tier-red);
+}
+
+/* ---------- 6. Cards ---------- */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+}
+
+.card-flat {
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+/* ---------- 7. Badges (score tiers & mode indicators) ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+}
+
+.badge-success { background: rgba(47, 191, 113, 0.15); color: var(--tier-green); }
+.badge-warning { background: rgba(245, 194, 66, 0.18); color: #9A7B00; }
+.badge-orange  { background: rgba(249, 160, 63, 0.18); color: #A65E00; }
+.badge-danger  { background: rgba(232, 84, 78, 0.15); color: var(--tier-red); }
+.badge-neutral { background: var(--color-bg-alt); color: var(--color-text-muted); }
+
+/* ---------- 8. Forms ---------- */
+textarea, input[type="text"] {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  resize: vertical;
+}
+
+textarea:focus, input[type="text"]:focus {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 1px;
+}
+
+/* ---------- 9. Footer ---------- */
+.site-footer {
+  padding: var(--space-4) 0;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* ---------- 10. Utility Classes ---------- */
+.text-center { text-align: center; }
+.text-muted { color: var(--color-text-muted); }
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.hidden { display: none !important; }
