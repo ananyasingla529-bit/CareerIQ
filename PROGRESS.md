@@ -47,7 +47,20 @@ Verified: landing page loads and styles correctly, navigation works across all 4
 
 ---
 
-## Day 4 — Resume Input: Upload, Parsing & Job Description Entry (Upcoming)
-**Planned:** Build the PDF upload widget, PDF.js text extraction, review/edit step, plain-text paste fallback, and job description input with validation on the real `analyze.html`. See Implementation Blueprint, Day 3 section, for full detail.
+## Day 4 — Resume Input: Upload, Parsing & Job Description Entry (July 31, 2026)
+Built the first real user-facing feature: PDF upload (drag-and-drop + click-to-browse) with client-side text extraction via PDF.js, an editable review step, and a plain-text paste fallback for parse failures or scanned PDFs. Added job description input with live character-count validation (100-char minimum) and wired the Analyze button's enable/disable logic to require both valid resume and JD text.
+
+**Issue resolved:** the initially chosen PDF.js CDN version (4.0.379) failed to load correctly via a classic script tag due to an ES module format change, causing every PDF to fail parsing regardless of validity. Fixed by pinning to PDF.js 3.11.174, the last version compatible with non-module script loading. Verified working end-to-end with a real resume PDF afterward.
+
+New file added beyond the original Day 2 scaffold: `js/analyze-page.js`, holding page-specific UI wiring separately from the reusable `pdfParser.js` module.
+
+**Deliverables produced:** DAY4-SUMMARY.md; working `pdfParser.js`, `analyze-page.js`, updated `analyze.html` and `css/styles.css`.
+
+**Status:** ✅ Complete — Day 5 (Blueprint's "Day 4": AI Analysis Engine) ready to begin immediately.
+
+---
+
+## Day 5 — AI Analysis Engine (Upcoming)
+**Planned:** Cloudflare Worker proxy setup, locked JSON report schema implementation, `js/aiEngine.js` for calling the proxy and validating responses. See Implementation Blueprint, Day 4 section, for full detail.
 
 **Status:** ⏳ Not started

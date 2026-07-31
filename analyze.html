@@ -10,19 +10,67 @@
 
   <main>
     <section class="section">
-      <div class="container">
+      <div class="container" style="max-width: 720px;">
         <h1>Analyze a Job</h1>
-        <p class="text-muted">
-          Resume upload and job description input will be built here tomorrow
-          (Day 4 of the Implementation Blueprint).
-        </p>
-        <div class="card-flat">
-          <p style="margin: 0;">🚧 Coming next: PDF upload, text review, and JD input.</p>
+        <p class="text-muted">Upload your resume, then paste the job description below.</p>
+
+        <!-- STEP 1: RESUME INPUT -->
+        <div class="step">
+          <span class="step-label">STEP 1</span>
+          <h3 style="margin-top: var(--space-2);">Your Resume</h3>
+
+          <!-- Upload dropzone (shown by default) -->
+          <div id="dropzone" class="dropzone">
+            <div class="dropzone-icon">⬆️</div>
+            <div class="dropzone-text">Drag &amp; drop your PDF resume here</div>
+            <div class="text-muted">or click to browse</div>
+            <input type="file" id="pdfInput" accept="application/pdf" />
+          </div>
+          <div class="text-center mt-2">
+            <button type="button" id="pasteInsteadBtn" class="btn-link">Paste text instead</button>
+          </div>
+
+          <!-- Parse error alert (hidden by default) -->
+          <div id="parseError" class="alert alert-error hidden"></div>
+
+          <!-- Resume text review area (hidden until a file is parsed or "paste instead" is clicked) -->
+          <div id="resumeReview" class="hidden mt-3">
+            <div id="resumeStatus" class="resume-status">
+              <span>✓</span>
+              <span id="resumeStatusText">Extracted from your resume</span>
+            </div>
+            <textarea id="resumeTextArea" placeholder="Paste or review your resume text here..."></textarea>
+            <div class="text-muted mt-1" style="font-size: 0.85rem;">
+              Review and fix anything that looks off before analyzing.
+            </div>
+          </div>
         </div>
+
+        <!-- STEP 2: JOB DESCRIPTION INPUT -->
+        <div class="step">
+          <span class="step-label">STEP 2</span>
+          <h3 style="margin-top: var(--space-2);">Job Description</h3>
+          <textarea id="jdTextArea" placeholder="Paste the full job description here..."></textarea>
+          <div id="jdCharCounter" class="char-counter">0 / 100 characters minimum</div>
+        </div>
+
+        <!-- ANALYZE ACTION -->
+        <div class="analyze-bar">
+          <button type="button" id="analyzeBtn" class="btn btn-primary" disabled>Analyze Fit &rarr;</button>
+          <div class="analyze-hint">Add your resume and a job description (100+ characters) to continue.</div>
+        </div>
+
+        <!-- Report will render here starting Day 5 -->
+        <div id="reportContainer"></div>
       </div>
     </section>
   </main>
 
+  <!-- PDF.js library (for client-side PDF text extraction) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
   <script src="js/app.js"></script>
+  <script src="js/pdfParser.js"></script>
+  <script src="js/analyze-page.js"></script>
 </body>
 </html>
