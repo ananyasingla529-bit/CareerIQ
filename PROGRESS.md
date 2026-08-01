@@ -60,7 +60,25 @@ New file added beyond the original Day 2 scaffold: `js/analyze-page.js`, holding
 
 ---
 
-## Day 5 — AI Analysis Engine (Upcoming)
-**Planned:** Cloudflare Worker proxy setup, locked JSON report schema implementation, `js/aiEngine.js` for calling the proxy and validating responses. See Implementation Blueprint, Day 4 section, for full detail.
+## Day 5 — AI Analysis Engine (August 1, 2026)
+Adapted the plan to use free tools only: since the Anthropic Claude API requires billing, substituted **Google Gemini API** as the AI provider — a swap requiring zero architectural changes, since `aiEngine.js` was always the single isolated integration point per the modularity principle established in `ARCHITECTURE.md`.
+
+Created a free Google AI Studio account and Gemini API key (practiced good security hygiene: an accidentally-exposed key was immediately revoked and regenerated). Deployed a Cloudflare Worker (`black-river-885d.ananyasingla529.workers.dev`) storing the key as an encrypted secret, never exposed to the browser or committed to the repo. Built `proxy/cloudflare-worker.js` (validates requests, prompts Gemini, validates and returns the locked JSON schema) and `js/aiEngine.js` (client-side call with timeout, retry-ready error typing, defense-in-depth schema validation). Wired the real AI call into `analyze.html`, replacing yesterday's placeholder.
+
+**Issues resolved:** hit three consecutive 404 errors as Google has retired/renamed several Gemini model versions recently; root-caused via Gemini's own error message and confirmed via research. Fixed by switching to `gemini-flash-latest` — Google's official self-updating model alias — specifically chosen to prevent this exact breakage from recurring as models are retired going forward.
+
+**Deliverables produced:** DAY5-SUMMARY.md, updated ENVIRONMENT.md (Gemini config replacing the originally-planned Anthropic config).
+
+**Status:** ✅ Complete — full AI pipeline verified working end-to-end with real, varying results across multiple job descriptions. Day 6 (Blueprint's "Day 5": Report UI) ready to begin immediately.
+
+---
+
+## 💡 v2 Idea Captured (August 1, 2026)
+**Resume Rewrite Assistant** — while reviewing Day 5's AI output, identified a natural extension beyond the current `recommendations` field: AI-suggested phrasing/edits to help surface skills the candidate already has but that aren't clearly reflected in their resume text (e.g., "you have this JD-required skill from Project X, but it's not in your Skills section — here's suggested wording"). This goes beyond advice into actual editable rewrite suggestions — a genuinely new feature (own UI, own prompt, edits the user's document) rather than a display improvement, so it's deliberately deferred to v2 to protect the remaining 5 days' core scope. v1.0's `recommendations` array already covers "what to improve," just not "exact suggested wording."
+
+---
+
+## Day 6 — Report UI: Fit Score, Evidence Panel & Reasoning Panel (Upcoming)
+**Planned:** Build the full styled report UI — Fit Score hero, category breakdown chart, Evidence Panel, AI Reasoning Panel, Apply Confidence Meter, Recommended Next Action — replacing today's temporary plain-text result. See Implementation Blueprint, Day 5 section, for full detail.
 
 **Status:** ⏳ Not started

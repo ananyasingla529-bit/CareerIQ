@@ -107,15 +107,50 @@ function initAnalyzePage() {
     analyzeBtn.disabled = !(resumeReady && jdReady);
   }
 
-  // ---------- Analyze button click (temporary — real engine wired Day 5/6) ----------
-  analyzeBtn.addEventListener("click", () => {
+  // ---------- Analyze button click — calls the real AI engine ----------
+  analyzeBtn.addEventListener("click", async () => {
     const resumeText = resumeTextArea.value.trim();
     const jdText = jdTextArea.value.trim();
-    console.log("Ready to analyze. Captured input:", { resumeText, jdText });
-    alert(
-      "Input captured successfully! Check the browser console (F12) to see the resume and JD text.\n\n" +
-      "The real AI analysis engine will be wired up on Day 5."
-    );
+    const resultArea = document.getElementById("resultArea");
+    const analyzeHint = document.getElementById("analyzeHint");
+
+    analyzeBtn.disabled = true;
+    analyzeHint.textContent = "Analyzing your fit... this takes about 15-20 seconds.";
+    resultArea.innerHTML = `
+      <div class="card-flat text-center">
+        <p style="margin: 0;">🔎 Analyzing your resume against this job description...</p>
+      </div>
+    `;
+
+    try {
+      const report = await getAIAnalysis(resumeText, jdText);
+      console.log("AI analysis complete:", report);
+
+      // Temporary raw display — the real styled report UI (score hero, evidence
+      // panel, reasoning panel, etc.) is built tomorrow. This just proves the
+      // full pipeline works end-to-end today.
+      resultArea.innerHTML = `
+        <div class="card">
+          <div class="badge badge-success mt-1">✨ AI Analysis Complete</div>
+          <h3 class="mt-3">Overall Fit Score: ${report.overallFitScore} / 100</h3>
+          <p><strong>Apply Confidence:</strong> ${escapeHTML(report.applyConfidence.label)}</p>
+          <p><strong>Recommended Action:</strong> ${escapeHTML(report.recommendedAction)}</p>
+          <p class="text-muted mt-2">Full report view (evidence panel, reasoning panel, category breakdown) is built tomorrow — check the browser console (F12) to see the complete raw data captured today.</p>
+        </div>
+      `;
+      analyzeHint.textContent = "Analysis complete — see the result above.";
+    } catch (err) {
+      console.error("AI analysis failed:", err);
+      resultArea.innerHTML = `
+        <div class="alert alert-error">
+          <strong>AI analysis failed:</strong> ${escapeHTML(err.message)}
+          <br /><span class="text-muted">(Error code: ${escapeHTML(err.code || "UNKNOWN")}. The automatic offline fallback will be built tomorrow — for today, this confirms our error handling works correctly.)</span>
+        </div>
+      `;
+      analyzeHint.textContent = "Something went wrong — see the message above.";
+    } finally {
+      analyzeBtn.disabled = false;
+    }
   });
 }
 

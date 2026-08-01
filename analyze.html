@@ -57,10 +57,13 @@
         <!-- ANALYZE ACTION -->
         <div class="analyze-bar">
           <button type="button" id="analyzeBtn" class="btn btn-primary" disabled>Analyze Fit &rarr;</button>
-          <div class="analyze-hint">Add your resume and a job description (100+ characters) to continue.</div>
+          <div class="analyze-hint" id="analyzeHint">Add your resume and a job description (100+ characters) to continue.</div>
         </div>
 
-        <!-- Report will render here starting Day 5 -->
+        <!-- Temporary result area — real styled report UI built tomorrow -->
+        <div id="resultArea" class="mt-4"></div>
+
+        <!-- Full report will render here starting tomorrow -->
         <div id="reportContainer"></div>
       </div>
     </section>
@@ -71,6 +74,7 @@
 
   <script src="js/app.js"></script>
   <script src="js/pdfParser.js"></script>
+  <script src="js/aiEngine.js"></script>
   <script src="js/analyze-page.js"></script>
 </body>
 </html>

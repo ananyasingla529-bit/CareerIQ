@@ -20,16 +20,17 @@ CareerIQ's frontend is a **static site** — plain HTML/CSS/JS with no build ste
 
 ---
 
-## 3. Configuration That Will Be Needed Later (Not Yet — Documented for Planning)
+## 3. Configuration Set Up on Day 5 (AI Analysis Engine)
 
-These are **not set up today** — they belong to Day 5 (AI Analysis Engine) per the Implementation Blueprint — but are documented here now so nothing is a surprise later.
+**Adaptation note:** the PRD/Blueprint originally planned the Anthropic Claude API as the primary AI engine. Since the Claude API requires billing and this session required free tools only, **Google Gemini API** was substituted — a genuinely free-tier AI provider. This only changed the concrete implementation inside `js/aiEngine.js` and the Worker; the architecture, JSON schema, and every downstream file are unaffected (see `DAY5-SUMMARY.md` for full detail).
 
 | Variable / Secret | Where It Lives | Set On | Purpose |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | Cloudflare Worker **secret** (server-side only — never in this repo, never in a `.env` file committed to Git) | Day 5 | Authenticates the Worker's server-side calls to the Claude API |
-| Worker deployment URL | Hardcoded as a constant inside `js/aiEngine.js` (public, safe to expose — it's just an endpoint address, not a credential) | Day 5 | Tells the browser where to send analysis requests |
+| `GEMINI_API_KEY` | Cloudflare Worker **secret** (server-side only — never in this repo, never in any committed file) | Day 5 | Authenticates the Worker's server-side calls to the Gemini API |
+| Worker deployment URL: `https://black-river-885d.ananyasingla529.workers.dev` | Hardcoded as a constant inside `js/aiEngine.js` (public, safe to expose — it's just an endpoint address, not a credential) | Day 5 | Tells the browser where to send analysis requests |
+| Gemini model | `gemini-flash-latest` (Google's self-updating alias — chosen specifically to avoid breakage when Google retires specific model versions, which happened multiple times during today's setup) | Day 5 | The AI model used for analysis |
 
-**Why this matters for security:** the Anthropic API key must never appear in any file inside this Git repository, because the repository is public and GitHub Pages serves these files directly to anyone's browser. The Cloudflare Worker is the *only* place this key will ever exist, and it's configured directly in the Cloudflare dashboard (a secret store, not a file) — never committed to version control. `.gitignore` already excludes common secret-file patterns as a safety net, even though our architecture doesn't plan to use local `.env` files at all.
+**Why this matters for security:** the Gemini API key must never appear in any file inside this Git repository, because the repository is public and GitHub Pages serves these files directly to anyone's browser. The Cloudflare Worker is the *only* place this key will ever exist, configured directly in the Cloudflare dashboard as an encrypted secret — never committed to version control. `.gitignore` already excludes common secret-file patterns as a safety net, even though our architecture doesn't use local `.env` files at all.
 
 ---
 
