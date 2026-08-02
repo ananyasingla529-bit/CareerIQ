@@ -78,7 +78,20 @@ Created a free Google AI Studio account and Gemini API key (practiced good secur
 
 ---
 
-## Day 6 — Report UI: Fit Score, Evidence Panel & Reasoning Panel (Upcoming)
-**Planned:** Build the full styled report UI — Fit Score hero, category breakdown chart, Evidence Panel, AI Reasoning Panel, Apply Confidence Meter, Recommended Next Action — replacing today's temporary plain-text result. See Implementation Blueprint, Day 5 section, for full detail.
+## Day 6 — Report UI, Offline Fallback Engine & Live Deployment (August 2, 2026)
+Agreed on a pacing adjustment: rather than declaring "MVP complete" (which was actually the Blueprint's final-day scope), built two naturally-paired Blueprint days today — the full Report UI and the Offline Fallback Engine — since both share the same JSON contract. Save/Dashboard and Comparison remain on Days 8-9, not rushed.
+
+Built `js/report.js` (full styled report: score hero, confidence meter, category breakdown, Evidence Panels, eligibility flags, Why Good Fit, recommendations, expandable Reasoning Panel) and ~300 lines of new component CSS. Built the complete offline engine (`data/skillsTaxonomy.js`, `js/offlineEngine.js` with a documented weighted scoring formula, `js/analysisController.js` orchestrating automatic AI-to-offline fallback) — verified working via DevTools offline simulation, producing a full sensible report with correct mode labeling.
+
+Added the required footer attribution ("Built with Claude as part of the AB Talks 60-Day Claude AI Challenge") and deployed to GitHub Pages — live at **https://ananyasingla529-bit.github.io/CareerIQ/**. Verified the full AI pipeline (GitHub Pages → Cloudflare Worker → Gemini → rendered report) works correctly in production, not just locally, and confirmed the footer is visible on the live site.
+
+**Deliverables produced:** DAY6-SUMMARY.md; 10 new/updated code files; first live, publicly shareable deployment.
+
+**Status:** ✅ Complete — full report UI and offline reliability both verified working, locally and in production. Day 7 (Blueprint's "Day 7": Saved Analyses & Dashboard) ready to begin immediately.
+
+---
+
+## Day 7 — Saved Analyses & Dashboard (Upcoming)
+**Planned:** Build `js/storage.js` (localStorage CRUD), real `dashboard.html`, and a "Save This Analysis" button on the report capturing company name and job title. See Implementation Blueprint, Day 7 section, for full detail.
 
 **Status:** ⏳ Not started
