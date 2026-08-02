@@ -112,9 +112,11 @@ function initAnalyzePage() {
     const resumeText = resumeTextArea.value.trim();
     const jdText = jdTextArea.value.trim();
     const resultArea = document.getElementById("resultArea");
+    const reportContainer = document.getElementById("reportContainer");
     const analyzeHint = document.getElementById("analyzeHint");
 
     analyzeBtn.disabled = true;
+    reportContainer.innerHTML = "";
     analyzeHint.textContent = "Analyzing your fit... this takes about 15-20 seconds.";
     resultArea.innerHTML = `
       <div class="card-flat text-center">
@@ -123,28 +125,19 @@ function initAnalyzePage() {
     `;
 
     try {
-      const report = await getAIAnalysis(resumeText, jdText);
-      console.log("AI analysis complete:", report);
-
-      // Temporary raw display — the real styled report UI (score hero, evidence
-      // panel, reasoning panel, etc.) is built tomorrow. This just proves the
-      // full pipeline works end-to-end today.
-      resultArea.innerHTML = `
-        <div class="card">
-          <div class="badge badge-success mt-1">✨ AI Analysis Complete</div>
-          <h3 class="mt-3">Overall Fit Score: ${report.overallFitScore} / 100</h3>
-          <p><strong>Apply Confidence:</strong> ${escapeHTML(report.applyConfidence.label)}</p>
-          <p><strong>Recommended Action:</strong> ${escapeHTML(report.recommendedAction)}</p>
-          <p class="text-muted mt-2">Full report view (evidence panel, reasoning panel, category breakdown) is built tomorrow — check the browser console (F12) to see the complete raw data captured today.</p>
-        </div>
-      `;
-      analyzeHint.textContent = "Analysis complete — see the result above.";
+      const report = await runAnalysis(resumeText, jdText);
+      console.log("Analysis complete:", report);
+      resultArea.innerHTML = "";
+      renderReport(report, reportContainer);
+      reportContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+      analyzeHint.textContent = "Analysis complete — see your full report below.";
     } catch (err) {
-      console.error("AI analysis failed:", err);
+      // Should be extremely rare — runAnalysis() (Milestone 2) always
+      // resolves via the offline fallback. This catch is a final safety net.
+      console.error("Analysis failed unexpectedly:", err);
       resultArea.innerHTML = `
         <div class="alert alert-error">
-          <strong>AI analysis failed:</strong> ${escapeHTML(err.message)}
-          <br /><span class="text-muted">(Error code: ${escapeHTML(err.code || "UNKNOWN")}. The automatic offline fallback will be built tomorrow — for today, this confirms our error handling works correctly.)</span>
+          <strong>Something went wrong:</strong> ${escapeHTML(err.message || "Unknown error")}
         </div>
       `;
       analyzeHint.textContent = "Something went wrong — see the message above.";

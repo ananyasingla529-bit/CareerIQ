@@ -407,3 +407,300 @@ textarea:focus, input[type="text"]:focus {
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }
+
+/* =========================================================
+   Day 6 additions — Report UI, offline banner, footer note
+   ========================================================= */
+
+/* ---------- 16. Report Container ---------- */
+.report {
+  margin-top: var(--space-4);
+}
+
+.report-hero-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.report-hero-side {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---------- 17. Score Hero ---------- */
+.score-hero {
+  text-align: center;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  min-width: 180px;
+}
+
+.score-hero-number {
+  font-family: var(--font-heading);
+  font-size: 3.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.score-hero-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.score-hero-success { background: rgba(47, 191, 113, 0.12); }
+.score-hero-success .score-hero-number { color: var(--tier-green); }
+
+.score-hero-warning { background: rgba(245, 194, 66, 0.15); }
+.score-hero-warning .score-hero-number { color: #9A7B00; }
+
+.score-hero-orange { background: rgba(249, 160, 63, 0.15); }
+.score-hero-orange .score-hero-number { color: #A65E00; }
+
+.score-hero-danger { background: rgba(232, 84, 78, 0.12); }
+.score-hero-danger .score-hero-number { color: var(--tier-red); }
+
+/* ---------- 18. Apply Confidence Meter ---------- */
+.confidence-meter {
+  width: 100%;
+}
+
+.confidence-track {
+  display: flex;
+  gap: 4px;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.confidence-segment {
+  flex: 1;
+  opacity: 0.25;
+}
+
+.confidence-segment.active {
+  opacity: 1;
+}
+
+.confidence-danger { background: var(--tier-red); }
+.confidence-orange { background: var(--tier-orange); }
+.confidence-warning { background: var(--tier-yellow); }
+.confidence-success { background: var(--tier-green); }
+
+.confidence-readout {
+  margin-top: var(--space-1);
+}
+
+/* ---------- 19. Next Action Card ---------- */
+.next-action-card {
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.next-action-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-top: var(--space-1);
+}
+
+/* ---------- 20. Category Breakdown Chart (CSS bars, no chart lib needed) ---------- */
+.category-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.category-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 36px;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+}
+
+.category-label {
+  color: var(--color-text-muted);
+}
+
+.category-bar-track {
+  background: var(--color-bg-alt);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.category-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 400ms ease;
+}
+
+.category-bar-success { background: var(--tier-green); }
+.category-bar-warning { background: var(--tier-yellow); }
+.category-bar-orange  { background: var(--tier-orange); }
+.category-bar-danger  { background: var(--tier-red); }
+
+.category-value {
+  font-weight: 700;
+  text-align: right;
+  color: var(--color-navy);
+}
+
+/* ---------- 21. Findings (Strengths / Gaps / Eligibility) ---------- */
+.findings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .findings-grid { grid-template-columns: 1fr; }
+  .category-row { grid-template-columns: 100px 1fr 32px; }
+}
+
+.finding-item {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  font-size: 0.92rem;
+}
+
+.finding-strength {
+  background: rgba(47, 191, 113, 0.08);
+}
+
+.finding-gap {
+  background: rgba(245, 194, 66, 0.1);
+}
+
+.finding-blocker {
+  background: rgba(232, 84, 78, 0.1);
+}
+
+.finding-point {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.finding-list {
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+.finding-list li {
+  margin-bottom: var(--space-1);
+}
+
+/* ---------- 22. Evidence Panel ---------- */
+.evidence-toggle {
+  background: none;
+  border: none;
+  color: var(--color-navy);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: var(--space-1) 0 0 0;
+}
+
+.evidence-panel {
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  background: var(--color-white);
+  border-left: 3px solid var(--color-cyan);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.evidence-quote {
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.evidence-source {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-right: 4px;
+}
+
+/* ---------- 23. Why Good Fit Card ---------- */
+.why-good-fit-card {
+  background: linear-gradient(135deg, rgba(63, 208, 201, 0.08), rgba(249, 231, 149, 0.12));
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+/* ---------- 24. AI Reasoning Panel ---------- */
+.reasoning-panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.reasoning-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.reasoning-content {
+  margin-top: var(--space-3);
+}
+
+.reasoning-item {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.reasoning-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.reasoning-conclusion {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-1);
+}
+
+.reasoning-explanation {
+  font-size: 0.9rem;
+}
+
+/* ---------- 25. Offline / Reconnect Banner ---------- */
+.reconnect-banner {
+  background: rgba(63, 208, 201, 0.1);
+  border: 1px solid rgba(63, 208, 201, 0.3);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ---------- 26. Challenge Footer Note ---------- */
+.challenge-footer-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}

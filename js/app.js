@@ -48,7 +48,8 @@ function renderFooter() {
   const footerHTML = `
     <footer class="site-footer">
       <div class="container">
-        <p>CareerIQ — Smarter Job Decisions Start Here. Built for the AB Talks 60-Day Claude AI Challenge.</p>
+        <p>CareerIQ — Smarter Job Decisions Start Here.</p>
+        <p class="challenge-footer-note">Built with Claude as part of the AB Talks 60-Day Claude AI Challenge.</p>
       </div>
     </footer>
   `;
