@@ -27,6 +27,14 @@ function initAnalyzePage() {
   // ---------- Dropzone click-to-browse ----------
   dropzone.addEventListener("click", () => pdfInput.click());
 
+  // ---------- Dropzone keyboard accessibility ----------
+  dropzone.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      pdfInput.click();
+    }
+  });
+
   // ---------- Dropzone drag-and-drop ----------
   dropzone.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -119,8 +127,9 @@ function initAnalyzePage() {
     reportContainer.innerHTML = "";
     analyzeHint.textContent = "Analyzing your fit... this takes about 15-20 seconds.";
     resultArea.innerHTML = `
-      <div class="card-flat text-center">
-        <p style="margin: 0;">🔎 Analyzing your resume against this job description...</p>
+      <div class="card-flat text-center loading-row" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <p style="margin: 0;">Analyzing your resume against this job description...</p>
       </div>
     `;
 
@@ -129,6 +138,7 @@ function initAnalyzePage() {
       console.log("Analysis complete:", report);
       resultArea.innerHTML = "";
       renderReport(report, reportContainer);
+      renderSaveArea(report);
       reportContainer.scrollIntoView({ behavior: "smooth", block: "start" });
       analyzeHint.textContent = "Analysis complete — see your full report below.";
     } catch (err) {
@@ -145,6 +155,43 @@ function initAnalyzePage() {
       analyzeBtn.disabled = false;
     }
   });
+  /**
+   * Renders the "Save This Analysis" action below the report, using the
+   * company/title fields (prompting inline if they're empty).
+   */
+  function renderSaveArea(report) {
+    const saveArea = document.getElementById("saveArea");
+    saveArea.classList.remove("hidden");
+    saveArea.innerHTML = `
+      <button type="button" id="saveAnalysisBtn" class="btn btn-secondary">💾 Save This Analysis</button>
+      <div id="saveStatus" class="mt-2"></div>
+    `;
+
+    document.getElementById("saveAnalysisBtn").addEventListener("click", () => {
+      const companyInput = document.getElementById("companyNameInput");
+      const titleInput = document.getElementById("jobTitleInput");
+      const saveStatus = document.getElementById("saveStatus");
+
+      let companyName = companyInput.value.trim();
+      let jobTitle = titleInput.value.trim();
+
+      if (!companyName || !jobTitle) {
+        companyInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        companyInput.focus();
+        saveStatus.innerHTML = `<div class="alert alert-error">Please fill in the Company &amp; Role fields above (Step 3) before saving.</div>`;
+        return;
+      }
+
+      const result = saveAnalysis({ companyName, jobTitle, fullReport: report });
+      if (result.success) {
+        saveStatus.innerHTML = `<div class="alert alert-info">✓ Saved! View it anytime on your <a href="dashboard.html">Dashboard</a>.</div>`;
+        document.getElementById("saveAnalysisBtn").disabled = true;
+        document.getElementById("saveAnalysisBtn").textContent = "✓ Saved";
+      } else {
+        saveStatus.innerHTML = `<div class="alert alert-error">Could not save: ${escapeHTML(result.error || "unknown error")}</div>`;
+      }
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initAnalyzePage);

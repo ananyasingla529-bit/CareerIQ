@@ -91,7 +91,18 @@ Added the required footer attribution ("Built with Claude as part of the AB Talk
 
 ---
 
-## Day 7 — Saved Analyses & Dashboard (Upcoming)
-**Planned:** Build `js/storage.js` (localStorage CRUD), real `dashboard.html`, and a "Save This Analysis" button on the report capturing company name and job title. See Implementation Blueprint, Day 7 section, for full detail.
+## Day 7 — Saved Analyses, Dashboard & UI/UX Polish (August 3, 2026)
+Built `js/storage.js` (full localStorage CRUD with schema validation), a "Company & Role" input step on the analyze page, and a "Save This Analysis" action. Built the real `dashboard.html`/`js/dashboard.js`: card grid, status tracking (added a user-requested "Not Interested" status alongside Interested/Applied/Not Applied), View Report modal reusing `report.js`, delete/export/delete-all, and a proper empty state.
+
+Followed with a senior-level UI/UX polish pass across the whole app: accessibility (skip link, focus outlines, ARIA live regions and labels, keyboard-accessible dropzone, Escape-to-close modals with focus return, improved text contrast), motion/feedback (loading spinner, report fade-in, card hover lift, button press feedback, reduced-motion support), and structural polish (sticky header with scroll shadow, spacing/mobile refinements).
+
+**Deliverables produced:** DAY7-SUMMARY.md; 14 new/updated code files spanning storage, dashboard, and app-wide polish.
+
+**Status:** ✅ Complete — save/dashboard fully functional and verified, full regression pass confirmed nothing broke. Day 8 (Blueprint's "Day 8": Job Comparison) ready to begin immediately.
+
+---
+
+## Day 8 — Job Comparison & Next Action Polish (Upcoming)
+**Planned:** Build `js/compare.js` and the real `compare.html` — select 2-3 saved analyses and compare fit score, category scores, strengths, gaps, eligibility, and Apply Confidence side-by-side. See Implementation Blueprint, Day 8 section, for full detail.
 
 **Status:** ⏳ Not started

@@ -23,14 +23,17 @@ function renderHeader() {
 
   const navItemsHTML = NAV_LINKS.map((link) => {
     const activeClass = link.href === currentPage ? " active" : "";
-    return `<li><a href="${link.href}" class="${activeClass.trim()}">${link.label}</a></li>`;
+    const ariaCurrent = link.href === currentPage ? ' aria-current="page"' : "";
+    return `<li><a href="${link.href}" class="${activeClass.trim()}"${ariaCurrent}>${link.label}</a></li>`;
   }).join("");
+
+  const skipLinkHTML = `<a href="#main-content" class="skip-link">Skip to main content</a>`;
 
   const headerHTML = `
     <header class="site-header">
       <div class="container">
         <a href="index.html" class="site-logo">CareerIQ</a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">&#9776;</button>
         <ul class="site-nav" id="siteNav">
           ${navItemsHTML}
         </ul>
@@ -38,7 +41,15 @@ function renderHeader() {
     </header>
   `;
 
-  document.body.insertAdjacentHTML("afterbegin", headerHTML);
+  document.body.insertAdjacentHTML("afterbegin", skipLinkHTML);
+  document.body.querySelector(".skip-link").insertAdjacentHTML("afterend", headerHTML);
+
+  // Ensure the main content area is reachable/focusable for the skip link
+  const main = document.querySelector("main");
+  if (main && !main.id) {
+    main.id = "main-content";
+    main.setAttribute("tabindex", "-1");
+  }
 }
 
 /**
@@ -66,7 +77,8 @@ function initMobileNav() {
   if (!toggleBtn || !nav) return;
 
   toggleBtn.addEventListener("click", () => {
-    nav.classList.toggle("open");
+    const isOpen = nav.classList.toggle("open");
+    toggleBtn.setAttribute("aria-expanded", String(isOpen));
   });
 }
 

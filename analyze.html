@@ -20,11 +20,11 @@
           <h3 style="margin-top: var(--space-2);">Your Resume</h3>
 
           <!-- Upload dropzone (shown by default) -->
-          <div id="dropzone" class="dropzone">
-            <div class="dropzone-icon">⬆️</div>
+          <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Upload your PDF resume, click or press Enter to browse files">
+            <div class="dropzone-icon" aria-hidden="true">⬆️</div>
             <div class="dropzone-text">Drag &amp; drop your PDF resume here</div>
             <div class="text-muted">or click to browse</div>
-            <input type="file" id="pdfInput" accept="application/pdf" />
+            <input type="file" id="pdfInput" accept="application/pdf" aria-hidden="true" tabindex="-1" />
           </div>
           <div class="text-center mt-2">
             <button type="button" id="pasteInsteadBtn" class="btn-link">Paste text instead</button>
@@ -39,7 +39,7 @@
               <span>✓</span>
               <span id="resumeStatusText">Extracted from your resume</span>
             </div>
-            <textarea id="resumeTextArea" placeholder="Paste or review your resume text here..."></textarea>
+            <textarea id="resumeTextArea" placeholder="Paste or review your resume text here..." aria-label="Resume text"></textarea>
             <div class="text-muted mt-1" style="font-size: 0.85rem;">
               Review and fix anything that looks off before analyzing.
             </div>
@@ -50,14 +50,24 @@
         <div class="step">
           <span class="step-label">STEP 2</span>
           <h3 style="margin-top: var(--space-2);">Job Description</h3>
-          <textarea id="jdTextArea" placeholder="Paste the full job description here..."></textarea>
-          <div id="jdCharCounter" class="char-counter">0 / 100 characters minimum</div>
+          <textarea id="jdTextArea" placeholder="Paste the full job description here..." aria-label="Job description text"></textarea>
+          <div id="jdCharCounter" class="char-counter" aria-live="polite">0 / 100 characters minimum</div>
+        </div>
+
+        <!-- STEP 3: JOB IDENTIFICATION (used only when saving) -->
+        <div class="step">
+          <span class="step-label">STEP 3</span>
+          <h3 style="margin-top: var(--space-2);">Company &amp; Role <span class="text-muted" style="font-weight: 400; font-size: 0.85rem;">(for saving later)</span></h3>
+          <div class="two-col-inputs">
+            <input type="text" id="companyNameInput" placeholder="Company name (e.g., Google)" maxlength="100" aria-label="Company name" />
+            <input type="text" id="jobTitleInput" placeholder="Job title (e.g., SDE Intern)" maxlength="150" aria-label="Job title" />
+          </div>
         </div>
 
         <!-- ANALYZE ACTION -->
         <div class="analyze-bar">
           <button type="button" id="analyzeBtn" class="btn btn-primary" disabled>Analyze Fit &rarr;</button>
-          <div class="analyze-hint" id="analyzeHint">Add your resume and a job description (100+ characters) to continue.</div>
+          <div class="analyze-hint" id="analyzeHint" aria-live="polite">Add your resume and a job description (100+ characters) to continue.</div>
         </div>
 
         <!-- Temporary loading/error status area -->
@@ -65,6 +75,9 @@
 
         <!-- Full styled report renders here -->
         <div id="reportContainer"></div>
+
+        <!-- Save action + confirmation, shown after a report renders -->
+        <div id="saveArea" class="hidden mt-3 text-center"></div>
       </div>
     </section>
   </main>
@@ -79,6 +92,7 @@
   <script src="js/offlineEngine.js"></script>
   <script src="js/analysisController.js"></script>
   <script src="js/report.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/analyze-page.js"></script>
 </body>
 </html>
