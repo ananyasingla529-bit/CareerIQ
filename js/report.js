@@ -32,10 +32,10 @@ const CATEGORY_LABELS = {
 };
 
 function scoreColorClass(score) {
-  if (score >= 80) return "success";
-  if (score >= 60) return "warning";
-  if (score >= 40) return "orange";
-  return "danger";
+  if (score >= 85) return "success";  // Excellent = Neon Lime
+  if (score >= 70) return "warning";  // Good = Emerald Green
+  if (score >= 50) return "orange";   // Average = Amber
+  return "danger";                    // Poor = Crimson Red
 }
 
 function renderModeBadge(mode) {

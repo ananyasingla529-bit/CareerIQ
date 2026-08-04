@@ -12,17 +12,22 @@
     <section class="section">
       <div class="container">
         <h1>Compare Jobs</h1>
-        <p class="text-muted">
-          Side-by-side comparison of 2–3 saved analyses will be built here on Day 8
-          of the Implementation Blueprint.
-        </p>
-        <div class="card-flat">
-          <p style="margin: 0;">🚧 Coming later: pick 2–3 saved jobs and compare them side by side.</p>
+        <p class="text-muted">Side-by-side comparison of your selected analyses.</p>
+
+        <div id="compareContainer"></div>
+
+        <div id="compareEmptyState" class="empty-state hidden">
+          <div class="empty-state-icon">⚖️</div>
+          <h3>No comparison selected</h3>
+          <p class="text-muted">Go to your Dashboard, select 2 or 3 saved analyses using the checkboxes, then click "Compare Selected."</p>
+          <a href="dashboard.html" class="btn btn-primary mt-2">Go to Dashboard &rarr;</a>
         </div>
       </div>
     </section>
   </main>
 
   <script src="js/app.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/compare.js"></script>
 </body>
 </html>

@@ -29,6 +29,13 @@ async function extractTextFromPDF(file) {
     throw new PDFParseError("The selected file is not a PDF.");
   }
 
+  const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024; // 8MB
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    throw new PDFParseError(
+      "This PDF is larger than 8MB, which is too big to process reliably in the browser. Please try a smaller file or paste your resume text instead."
+    );
+  }
+
   let pdf;
   try {
     const arrayBuffer = await file.arrayBuffer();

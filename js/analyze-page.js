@@ -8,6 +8,7 @@
 
 const MIN_JD_LENGTH = 100;
 const MIN_RESUME_LENGTH = 50;
+const MAX_PDF_SIZE_BYTES = 8 * 1024 * 1024; // 8MB — prevents huge PDFs from freezing the tab during PDF.js extraction
 
 let resumeTextValue = "";
 
@@ -72,6 +73,17 @@ function initAnalyzePage() {
   // ---------- Handle a dropped/selected PDF file ----------
   async function handlePDFFile(file) {
     parseError.classList.add("hidden");
+
+    // Reject oversized files before ever touching PDF.js — a huge PDF can
+    // freeze the tab for many seconds during text extraction otherwise.
+    if (file.size > MAX_PDF_SIZE_BYTES) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      parseError.textContent = `This file is ${sizeMB}MB, which is over our 8MB limit. Please upload a smaller PDF or use "Paste text instead" below.`;
+      parseError.classList.remove("hidden");
+      pdfInput.value = ""; // allow re-selecting the same filename after fixing it
+      return;
+    }
+
     dropzone.classList.add("hidden");
     resumeReview.classList.remove("hidden");
     resumeStatus.classList.remove("hidden");
