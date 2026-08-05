@@ -102,7 +102,20 @@ Followed with a senior-level UI/UX polish pass across the whole app: accessibili
 
 ---
 
-## Day 8 — Job Comparison & Next Action Polish (Upcoming)
-**Planned:** Build `js/compare.js` and the real `compare.html` — select 2-3 saved analyses and compare fit score, category scores, strengths, gaps, eligibility, and Apply Confidence side-by-side. See Implementation Blueprint, Day 8 section, for full detail.
+## Day 8 — Job Comparison, Design Refresh & Production QA (August 4, 2026)
+Built the Comparison feature: `js/compare.js`, real `compare.html`, dashboard checkbox selection with a sticky "Compare Selected" bar (max 3, min 2 enforced). Fixed two real bugs during testing — a "Best Fit" badge clipping issue and column over-stretching with few cards.
+
+Iteratively refreshed the visual design per direct feedback — from the original navy/cyan palette through Electric Indigo + Lime to a full dark-mode design system (Deep Indigo → Midnight Navy gradient, dark slate glassmorphic cards, sparingly-used Neon Lime accents) matching a Linear/Raycast/Vercel/Perplexity aesthetic. Updated score-tier breakpoints to 85/70/50 (Excellent/Good/Average/Poor) across all three rendering files to match.
+
+Ran a full production-readiness QA pass as a senior QA/security/performance reviewer: tightened Cloudflare Worker CORS from an effectively-open policy to an explicit origin allowlist, added an 8MB PDF file-size guard, added a defensive inner fallback to `analysisController.js` so the "never fails" promise has zero gaps even in worst-case scenarios, fixed a UI overlap bug with the sticky compare bar, and manually audited every dynamic text insertion point for XSS safety (confirmed clean). Completed a full end-to-end regression walkthrough with zero console errors.
+
+**Deliverables produced:** DAY8-SUMMARY.md; comparison feature (3 new/updated files), dark theme redesign (styles.css + 3 JS files), 5 QA/security fixes.
+
+**Status:** ✅ Complete — Comparison feature and full QA pass both verified locally and on the live production site. Day 9 (final polish/testing per Blueprint) ready to begin.
+
+---
+
+## Day 9 — Final Polish, Testing & Documentation (Upcoming)
+**Planned:** Final documentation (README, screenshots, architecture diagram), any remaining refinements, setting up for Day 10's final deployment. See Implementation Blueprint, Day 9 section, for full detail.
 
 **Status:** ⏳ Not started
