@@ -78,6 +78,71 @@ async function getAIAnalysis(resumeText, jdText) {
 }
 
 /**
+ * Calls the AI proxy's rewrite endpoint to get suggested resume phrasing
+ * for a list of missing skills/gaps. Unlike getAIAnalysis(), there is NO
+ * offline fallback for this feature — generating grounded, honest resume
+ * phrasing requires real AI reasoning, so a rule-based engine can't
+ * meaningfully replace it. Callers should handle this error and explain
+ * that the feature needs an internet connection, rather than silently
+ * falling back to something fake.
+ *
+ * @param {string} resumeText
+ * @param {string} jdText
+ * @param {string[]} gaps - up to ~6 skill/gap description strings
+ * @returns {Promise<{suggestions: Array<{skillOrGap: string, suggestedBullet: string|null, placementHint: string}>}>}
+ */
+async function getRewriteSuggestions(resumeText, jdText, gaps) {
+  if (!resumeText || resumeText.trim().length < 50) {
+    throw new AIServiceError("Resume text is too short.", "INVALID_INPUT");
+  }
+  if (!jdText || jdText.trim().length < 50) {
+    throw new AIServiceError("Job description text is too short.", "INVALID_INPUT");
+  }
+  if (!Array.isArray(gaps) || gaps.length === 0) {
+    throw new AIServiceError("No gaps provided to generate suggestions for.", "INVALID_INPUT");
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_REQUEST_TIMEOUT_MS);
+
+  let response;
+  try {
+    response = await fetch(AI_PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "rewrite", resumeText, jdText, gaps }),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new AIServiceError("The rewrite request timed out.", "UPSTREAM_TIMEOUT");
+    }
+    throw new AIServiceError("Could not reach the AI service (network error).", "NETWORK_ERROR");
+  }
+  clearTimeout(timeoutId);
+
+  let body;
+  try {
+    body = await response.json();
+  } catch (err) {
+    throw new AIServiceError("AI service returned an invalid response.", "MALFORMED_AI_RESPONSE");
+  }
+
+  if (!response.ok || !body.success) {
+    const code = body?.error?.code || "UPSTREAM_ERROR";
+    const message = body?.error?.message || "The AI service returned an error.";
+    throw new AIServiceError(message, code);
+  }
+
+  if (!body.data || !Array.isArray(body.data.suggestions)) {
+    throw new AIServiceError("AI response did not match the expected format.", "MALFORMED_AI_RESPONSE");
+  }
+
+  return body.data;
+}
+
+/**
  * Validates that a report object has every field required by the locked
  * schema (SCHEMA.md). Used defensively even though the Worker already
  * validates server-side — defense in depth.

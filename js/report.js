@@ -198,8 +198,15 @@ function renderNextAction(report) {
  * Main entry point — renders a full report into the given container element.
  * @param {Object} report - AnalysisReport (see SCHEMA.md)
  * @param {HTMLElement} containerEl
+ * @param {Object} [options] - { resumeText, jdText } — when both are provided
+ *   (i.e. right after a fresh analysis, not when viewing a saved report),
+ *   a "Get Resume Rewrite Suggestions" button is shown. Saved reports don't
+ *   retain the full original resume/JD text, so this feature only appears
+ *   in that fresh-analysis context — an intentional, honest scope boundary.
  */
-function renderReport(report, containerEl) {
+function renderReport(report, containerEl, options = {}) {
+  const { resumeText, jdText } = options;
+
   containerEl.innerHTML = `
     <div class="report card">
       ${renderModeBadge(report.analysisMode)}
@@ -229,6 +236,8 @@ function renderReport(report, containerEl) {
       <h3 class="mt-4">🚩 Eligibility Flags</h3>
       ${renderEligibilityFlags(report.eligibilityFlags)}
 
+      ${renderRewriteSection(report, resumeText, jdText)}
+
       <div class="why-good-fit-card mt-4">
         <h3>🌟 Why You're Still a Good Fit</h3>
         ${renderList(report.whyGoodFit)}
@@ -254,4 +263,99 @@ function renderReport(report, containerEl) {
       }
     });
   });
+
+  // Wire up the Rewrite Assistant button, if present
+  const rewriteBtn = containerEl.querySelector("#rewriteSuggestBtn");
+  if (rewriteBtn) {
+    rewriteBtn.addEventListener("click", () => handleRewriteButtonClick(report, resumeText, jdText, containerEl));
+  }
+}
+
+/**
+ * Renders the "Resume Rewrite Assistant" section — a button that, when
+ * clicked, calls the AI for grounded phrasing suggestions on the report's
+ * top gaps. Only rendered when we have the original resumeText/jdText
+ * (fresh analysis) and there's at least one gap to address.
+ */
+function renderRewriteSection(report, resumeText, jdText) {
+  const hasContext = resumeText && jdText;
+  const hasGaps = report.gaps && report.gaps.length > 0;
+  if (!hasContext || !hasGaps) return "";
+
+  return `
+    <div class="rewrite-section mt-4">
+      <h3>✍️ Resume Rewrite Assistant</h3>
+      <p class="text-muted" style="font-size: 0.9rem;">
+        Get AI-suggested phrasing for skills you may already have but that aren't clearly showing up on your resume.
+      </p>
+      <button type="button" id="rewriteSuggestBtn" class="btn btn-secondary">Get Rewrite Suggestions</button>
+      <div id="rewriteResultArea" class="mt-3"></div>
+    </div>
+  `;
+}
+
+/**
+ * Handles the Rewrite Assistant button click: calls the AI, shows a loading
+ * state, and renders results or a clear error. No offline fallback — this
+ * feature requires live AI reasoning, so failure is explained honestly
+ * rather than faked.
+ */
+async function handleRewriteButtonClick(report, resumeText, jdText, containerEl) {
+  const btn = containerEl.querySelector("#rewriteSuggestBtn");
+  const resultArea = containerEl.querySelector("#rewriteResultArea");
+  if (!btn || !resultArea) return;
+
+  const gapPoints = (report.gaps || []).slice(0, 6).map((g) => g.point);
+
+  btn.disabled = true;
+  resultArea.innerHTML = `
+    <div class="loading-row" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <p style="margin: 0;">Thinking through your resume for grounded suggestions...</p>
+    </div>
+  `;
+
+  try {
+    const result = await getRewriteSuggestions(resumeText, jdText, gapPoints);
+    renderRewriteSuggestions(result.suggestions, resultArea);
+    btn.textContent = "Regenerate Suggestions";
+    btn.disabled = false;
+  } catch (err) {
+    resultArea.innerHTML = `
+      <div class="alert alert-error">
+        <strong>Couldn't generate suggestions:</strong> ${escapeHTML(err.message || "Unknown error")}
+        <br /><span class="text-muted">This feature requires an AI connection — try again once you're back online.</span>
+      </div>
+    `;
+    btn.disabled = false;
+  }
+}
+
+/** Renders the list of rewrite suggestions returned by the AI. */
+function renderRewriteSuggestions(suggestions, resultArea) {
+  if (!suggestions || suggestions.length === 0) {
+    resultArea.innerHTML = `<p class="text-muted">No suggestions were generated.</p>`;
+    return;
+  }
+
+  const items = suggestions.map((s) => {
+    if (!s.suggestedBullet) {
+      // Honest "real gap, not a phrasing issue" case
+      return `
+        <div class="rewrite-item rewrite-item-honest">
+          <div class="rewrite-skill">🎯 ${escapeHTML(s.skillOrGap)}</div>
+          <div class="text-muted" style="font-size: 0.88rem;">${escapeHTML(s.placementHint)}</div>
+        </div>
+      `;
+    }
+    return `
+      <div class="rewrite-item">
+        <div class="rewrite-skill">✏️ ${escapeHTML(s.skillOrGap)}</div>
+        <div class="rewrite-bullet">"${escapeHTML(s.suggestedBullet)}"</div>
+        <div class="text-muted" style="font-size: 0.82rem;">${escapeHTML(s.placementHint)}</div>
+      </div>
+    `;
+  }).join("");
+
+  resultArea.innerHTML = `<div class="rewrite-results">${items}</div>`;
 }

@@ -1,11 +1,31 @@
 /**
  * app.js — Shared initialization for every CareerIQ page.
  * Responsibilities:
- *   1. Inject the site header (logo + nav) and footer into every page
- *   2. Highlight the active nav link based on the current page
- *   3. Handle the mobile nav toggle
- *   4. Expose small shared utility functions used by other modules
+ *   1. Apply the saved theme preference immediately (before header renders)
+ *   2. Inject the site header (logo + nav + theme toggle) and footer
+ *   3. Highlight the active nav link based on the current page
+ *   4. Handle the mobile nav toggle and the light/dark theme toggle
+ *   5. Expose small shared utility functions used by other modules
  */
+
+const THEME_STORAGE_KEY = "careeriq_theme";
+
+/**
+ * Applies the saved theme (or defaults to "dark") to <html> as early as
+ * possible, so the page never flashes the wrong theme on load.
+ */
+function applySavedTheme() {
+  let saved = "dark";
+  try {
+    saved = localStorage.getItem(THEME_STORAGE_KEY) || "dark";
+  } catch (e) {
+    // localStorage unavailable — fall back silently to dark
+  }
+  document.documentElement.setAttribute("data-theme", saved);
+}
+
+// Apply immediately, before DOMContentLoaded, to avoid a flash of the wrong theme.
+applySavedTheme();
 
 /** Pages and their nav labels — single source of truth for the nav menu. */
 const NAV_LINKS = [
@@ -29,14 +49,32 @@ function renderHeader() {
 
   const skipLinkHTML = `<a href="#main-content" class="skip-link">Skip to main content</a>`;
 
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+  const isLight = currentTheme === "light";
+
   const headerHTML = `
     <header class="site-header">
       <div class="container">
         <a href="index.html" class="site-logo">CareerIQ</a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">&#9776;</button>
-        <ul class="site-nav" id="siteNav">
-          ${navItemsHTML}
-        </ul>
+        <div class="site-header-right">
+          <ul class="site-nav" id="siteNav">
+            ${navItemsHTML}
+          </ul>
+          <button
+            type="button"
+            class="theme-toggle"
+            id="themeToggle"
+            role="switch"
+            aria-checked="${isLight}"
+            aria-label="Toggle light and dark theme"
+          >
+            <span class="theme-toggle-label" id="themeToggleLabel">${isLight ? "Light" : "Dark"}</span>
+            <span class="theme-toggle-track">
+              <span class="theme-toggle-thumb">${isLight ? "☀️" : "🌙"}</span>
+            </span>
+          </button>
+          <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">&#9776;</button>
+        </div>
       </div>
     </header>
   `;
@@ -83,6 +121,33 @@ function initMobileNav() {
 }
 
 /**
+ * Wires up the light/dark theme toggle switch.
+ * Must run AFTER renderHeader() since it needs #themeToggle to exist in the DOM.
+ */
+function initThemeToggle() {
+  const toggleBtn = document.getElementById("themeToggle");
+  const label = document.getElementById("themeToggleLabel");
+  const thumb = toggleBtn ? toggleBtn.querySelector(".theme-toggle-thumb") : null;
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = current === "light" ? "dark" : "light";
+
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch (e) {
+      // localStorage unavailable — theme choice just won't persist across visits
+    }
+
+    toggleBtn.setAttribute("aria-checked", String(next === "light"));
+    if (label) label.textContent = next === "light" ? "Light" : "Dark";
+    if (thumb) thumb.textContent = next === "light" ? "☀️" : "🌙";
+  });
+}
+
+/**
  * Shared utility: escape a string for safe insertion into innerHTML,
  * used by later modules (report.js, dashboard.js) when rendering
  * user-provided or AI-provided text to prevent broken markup.
@@ -114,6 +179,7 @@ function initApp() {
   renderHeader();
   renderFooter();
   initMobileNav();
+  initThemeToggle();
 }
 
 // Auto-run on every page as soon as the DOM is ready.

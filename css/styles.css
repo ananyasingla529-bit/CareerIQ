@@ -55,6 +55,85 @@
 
   /* Motion */
   --transition-fast: 220ms ease;
+
+  /* Composed gradients (theme-aware) */
+  --gradient-body: radial-gradient(ellipse 1200px 600px at 20% -10%, #23205A 0%, transparent 60%),
+                   linear-gradient(180deg, #0F1024 0%, #14163A 100%);
+  --gradient-header: linear-gradient(115deg, #1A1B44 0%, #171A3A 60%, #14163A 100%);
+  --header-border: rgba(108, 76, 255, 0.25);
+
+  /* Text colors used ON TOP OF tinted badge/alert backgrounds — must be
+     readable against BOTH the tint color and swap per theme, since a
+     bright pastel readable on a dark card becomes invisible on a pale
+     tinted card in light mode (and vice versa). */
+  --text-on-warning-tint: #FFD966;
+  --text-on-orange-tint: #FFB366;
+  --text-on-danger-tint: #FF8A8A;
+  --text-on-info-tint: #D4FF7A;
+
+  /* Heading color — separate from --color-white so headings can be
+     theme-aware (white on dark, navy on light) while --color-white
+     itself stays "true white" for other uses like button text. */
+  --color-heading: #FFFFFF;
+
+  /* Text for content sitting directly on a --tier-green background
+     (e.g. the "Best Fit" badge). In dark mode tier-green is bright neon
+     lime, so it needs dark text; in light mode it's a medium green, so
+     white text works fine. */
+  --text-on-tier-green: #0B0E2E;
+}
+
+/* =========================================================
+   LIGHT THEME — restores the original Day 2 palette
+   Activated via [data-theme="light"] on <html>
+   ========================================================= */
+[data-theme="light"] {
+  /* Brand palette (original CareerIQ identity) */
+  --color-navy: #1E2761;
+  --color-navy-light: #2A3578;
+  --color-navy-dark: #141A46;
+  --color-cyan: #3FD0C9;
+  --color-electric-blue: #1E2761;
+  --color-electric-cyan: #2AAFA8;
+  --color-gold: #F5C242;
+  --color-coral: #E8544E;
+  --color-orange: #F9A03F;
+
+  /* Score / tier colors (same thresholds, original hues) */
+  --tier-green: #2FBF71;
+  --tier-yellow: #F5C242;
+  --tier-orange: #F9A03F;
+  --tier-red: #E8544E;
+
+  /* Backgrounds & surfaces (light) */
+  --color-bg: #F7F8FC;
+  --color-bg-alt: #EFF1F8;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #FFFFFF;
+  --color-white: #FFFFFF;
+  --color-border: #E1E4EE;
+  --color-text: #1A1D2E;
+  --color-text-muted: #524C6B;
+  --color-glow-indigo: rgba(30, 39, 97, 0.12);
+  --color-glow-lime: rgba(63, 208, 201, 0.25);
+
+  --shadow-card: 0 2px 10px rgba(30, 39, 97, 0.08);
+  --shadow-card-hover: 0 6px 20px rgba(30, 39, 97, 0.14);
+
+  --gradient-body: var(--color-bg);
+  --gradient-header: var(--color-navy);
+  --header-border: transparent;
+
+  /* Dark, saturated variants readable against pale tinted badge/alert
+     backgrounds in light mode (the dark-theme bright pastels above would
+     be nearly invisible here). */
+  --text-on-warning-tint: #8A6D00;
+  --text-on-orange-tint: #A65E00;
+  --text-on-danger-tint: #A32E29;
+  --text-on-info-tint: #1F7A4D;
+
+  --color-heading: #1E2761;
+  --text-on-tier-green: #FFFFFF;
 }
 
 /* ---------- 2. Reset & Base ---------- */
@@ -69,17 +148,17 @@ html, body {
 
 body {
   font-family: var(--font-body);
-  background: radial-gradient(ellipse 1200px 600px at 20% -10%, #23205A 0%, transparent 60%),
-              linear-gradient(180deg, #0F1024 0%, #14163A 100%);
+  background: var(--gradient-body);
   background-attachment: fixed;
   color: var(--color-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  transition: background 300ms ease, color 300ms ease;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
-  color: var(--color-white);
+  color: var(--color-heading);
   margin: 0 0 var(--space-3) 0;
   line-height: 1.2;
 }
@@ -118,9 +197,10 @@ textarea, input {
 
 /* ---------- 4. Navigation ---------- */
 .site-header {
-  background: linear-gradient(115deg, #1A1B44 0%, #171A3A 60%, #14163A 100%);
-  border-bottom: 1px solid rgba(108, 76, 255, 0.25);
+  background: var(--gradient-header);
+  border-bottom: 1px solid var(--header-border);
   padding: var(--space-3) 0;
+  transition: background 300ms ease;
 }
 
 .site-header .container {
@@ -163,6 +243,13 @@ textarea, input {
   border-bottom: 2px solid var(--color-cyan);
 }
 
+/* Right-side header group: nav links + theme toggle + mobile hamburger */
+.site-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 /* Mobile nav toggle (hidden by default, shown under 640px) */
 .nav-toggle {
   display: none;
@@ -176,6 +263,10 @@ textarea, input {
 @media (max-width: 640px) {
   .nav-toggle { display: block; }
 
+  .site-header-right {
+    gap: var(--space-2);
+  }
+
   .site-nav {
     display: none;
     flex-direction: column;
@@ -186,6 +277,7 @@ textarea, input {
     background: var(--color-navy-light);
     padding: var(--space-3);
     border-radius: var(--radius-sm);
+    z-index: 150;
   }
 
   .site-nav.open { display: flex; }
@@ -270,8 +362,8 @@ textarea, input {
 }
 
 .badge-success { background: rgba(34, 197, 94, 0.15); color: var(--tier-green); }
-.badge-warning { background: rgba(250, 204, 21, 0.18); color: #FFD966; }
-.badge-orange  { background: rgba(251, 146, 60, 0.18); color: #FFB366; }
+.badge-warning { background: rgba(250, 204, 21, 0.18); color: var(--text-on-warning-tint); }
+.badge-orange  { background: rgba(251, 146, 60, 0.18); color: var(--text-on-orange-tint); }
 .badge-danger  { background: rgba(239, 68, 68, 0.15); color: var(--tier-red); }
 .badge-neutral { background: var(--color-bg-alt); color: var(--color-text-muted); }
 
@@ -409,13 +501,13 @@ textarea:focus, input[type="text"]:focus {
 
 .alert-error {
   background: rgba(239, 68, 68, 0.1);
-  color: #FF8A8A;
+  color: var(--text-on-danger-tint);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .alert-info {
   background: rgba(198, 255, 61, 0.1);
-  color: #D4FF7A;
+  color: var(--text-on-info-tint);
   border: 1px solid rgba(198, 255, 61, 0.3);
 }
 
@@ -485,10 +577,10 @@ textarea:focus, input[type="text"]:focus {
 .score-hero-success .score-hero-number { color: var(--tier-green); }
 
 .score-hero-warning { background: rgba(250, 204, 21, 0.15); }
-.score-hero-warning .score-hero-number { color: #FFD966; }
+.score-hero-warning .score-hero-number { color: var(--text-on-warning-tint); }
 
 .score-hero-orange { background: rgba(251, 146, 60, 0.15); }
-.score-hero-orange .score-hero-number { color: #FFB366; }
+.score-hero-orange .score-hero-number { color: var(--text-on-orange-tint); }
 
 .score-hero-danger { background: rgba(239, 68, 68, 0.12); }
 .score-hero-danger .score-hero-number { color: var(--tier-red); }
@@ -830,8 +922,14 @@ textarea:focus, input[type="text"]:focus {
   padding: 4px var(--space-2);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: var(--color-surface-2);
+  color: var(--color-text);
   width: auto;
+}
+
+.status-select option {
+  background: var(--color-surface-2);
+  color: var(--color-text);
 }
 
 .job-card-actions {
@@ -1150,7 +1248,7 @@ body.has-compare-bar {
   top: -14px;
   right: var(--space-3);
   background: var(--tier-green);
-  color: var(--color-white);
+  color: var(--text-on-tier-green);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px var(--space-2);
@@ -1186,4 +1284,107 @@ body.has-compare-bar {
 
 @media (max-width: 640px) {
   .compare-column { min-width: 260px; }
+}
+
+/* =========================================================
+   Theme Toggle Switch
+   ========================================================= */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: var(--space-2);
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  transition: background 200ms ease;
+}
+
+[data-theme="light"] .theme-toggle-track {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-cyan);
+  border-radius: 50%;
+  transition: transform 220ms ease, background 220ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(20px);
+  background: #FFD866;
+}
+
+.theme-toggle-label {
+  color: #C7CCE8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .theme-toggle-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 640px) {
+  .theme-toggle-label { display: none; }
+}
+
+/* =========================================================
+   Resume Rewrite Assistant
+   ========================================================= */
+.rewrite-section {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.rewrite-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.rewrite-item {
+  background: var(--color-bg-alt);
+  border-left: 3px solid var(--color-cyan);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.rewrite-item-honest {
+  border-left-color: var(--tier-orange);
+}
+
+.rewrite-skill {
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: var(--space-1);
+  font-size: 0.92rem;
+}
+
+.rewrite-bullet {
+  font-style: italic;
+  margin-bottom: var(--space-1);
+  line-height: 1.5;
 }
